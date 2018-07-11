@@ -1,0 +1,45 @@
+version: '2'
+services:
+  web:
+    build: ./odoo
+    depends_on:
+      - db
+    ports:
+      - 8069:8069
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+    networks:
+      localnet:
+        ipv4_address: 10.5.0.2
+  posbox:
+    build: ./posbox
+    command: -- --load=web,hw_proxy,hw_posbox_homepage,hw_escpos,hw_screen,hw_printer_network
+    ports:
+      - 8070:8069
+      - 8072:8072
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+    networks:
+      localnet:
+        ipv4_address: 10.5.0.3
+  db:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    networks:
+      localnet:
+        ipv4_address: 10.5.0.4
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+networks:
+  localnet:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
