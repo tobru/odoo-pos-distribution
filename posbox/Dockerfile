@@ -55,6 +55,9 @@ RUN pip install -U pip setuptools \
 RUN git clone --depth=1 -b 11.0 https://github.com/it-projects-llc/pos-addons.git \
     /opt/posbox/addons
 
+COPY hw_screen_main.py /usr/lib/python3/dist-packages/odoo/addons/hw_screen/controllers/main.py
+COPY hw_screen_main.py /usr/lib/python2.7/dist-packages/openerp/addons/hw_screen/controllers/main.py
+
 # Set default user when running the container
 USER odoo
 

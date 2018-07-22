@@ -5,7 +5,7 @@ services:
     depends_on:
       - db
     ports:
-      - 8069:8069
+      - 80:8069
     volumes:
       - odoo-web-data:/var/lib/odoo
     networks:

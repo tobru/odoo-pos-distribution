@@ -1,4 +1,4 @@
-FROM odoo:11
+FROM local/odoo:11
 
 USER root
 
@@ -15,3 +15,4 @@ RUN git clone --depth=1 -b 11.0 https://github.com/it-projects-llc/pos-addons.gi
     /opt/posbox/addons
 
 COPY odoo.conf /etc/odoo/odoo.conf
+COPY bootstrap.min.js /usr/lib/python3/dist-packages/odoo/addons/web/static/lib/bootstrap/js/
