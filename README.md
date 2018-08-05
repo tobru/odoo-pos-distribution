@@ -17,3 +17,24 @@ compatible, the image needs to be rebuilt on arm.
 
 Corresponding issue on GitHub: [Support for ARM64v8 #195](https://github.com/odoo/docker/issues/195).
 
+## Backup configuration
+
+Example contents of `backup.env`:
+
+```
+RESTIC_REPOSITORY=rclone:myremote:posbackup
+RESTIC_PASSWORD=extremelysecurepassword
+RCLONE_CONFIG_FWUCLOUD_TYPE=webdav
+RCLONE_CONFIG_FWUCLOUD_URL=https://nextcloud.example.com/remote.php/webdav/
+RCLONE_CONFIG_FWUCLOUD_VENDOR=nextcloud
+RCLONE_CONFIG_FWUCLOUD_USER=backupuser
+RCLONE_CONFIG_FWUCLOUD_PASS=encryptedpassword
+PGDATABASE=odoodbname
+```
+
+Restore of DB:
+
+```
+createdb -T template0 restoretest
+pg_restore -d restoretest /data/odoo_data.dump
+```

@@ -33,6 +33,20 @@ services:
     networks:
       localnet:
         ipv4_address: 10.5.0.4
+  backup:
+    build: ./backup
+    environment:
+      - PGHOST=db
+      - PGUSER=odoo
+      - PGPASSWORD=odoo
+      - BACKUP_SCHEDULE=0 19 * * *
+    env_file: backup.env
+    volumes:
+      - odoo-db-data:/data/pg_raw:ro
+      - /home/pi:/data/home-pi:ro
+    networks:
+      localnet:
+        ipv4_address: 10.5.0.5
 volumes:
   odoo-web-data:
   odoo-db-data:

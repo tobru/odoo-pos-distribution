@@ -12,4 +12,14 @@ RUN set -x; wget -O /tmp/rclone.zip https://downloads.rclone.org/v${RCLONE_VERSI
     unzip /tmp/rclone.zip && \
     mv rclone-v${RCLONE_VERSION}-linux-arm/rclone /usr/local/bin/rclone && \
     chmod +x /usr/local/bin/rclone && \
-    rm -rf rclone-* /tmp/rclone.zip
+    rm -rf rclone-* /tmp/rclone.zip && \
+    mkdir -p /root/.config/rclone && \
+    touch /root/.config/rclone/rclone.conf
+
+RUN apk add --no-cache bash ca-certificates postgresql && \
+    mkfifo -m 0666 /var/log/cron.log && \
+    ln -s /var/log/cron.log /var/log/crond.log
+
+ADD crondwrapper.sh resticbackup.sh /usr/local/bin/
+
+ENTRYPOINT ["crondwrapper.sh"]
