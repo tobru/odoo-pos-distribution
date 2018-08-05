@@ -1,0 +1,44 @@
+{
+	"checkers": [
+		{
+			"type": "http",
+			"endpoint_name": "Mikrotik Access Point",
+			"endpoint_url": "http://192.168.233.1"
+		},
+		{
+			"type": "http",
+			"endpoint_name": "Odoo",
+			"endpoint_url": "http://10.5.0.2:8069"
+		},
+		{
+			"type": "http",
+			"endpoint_name": "PosBox",
+			"endpoint_url": "http://10.5.0.3:8069"
+		},
+		{
+			"type": "tcp",
+			"endpoint_name": "Printer 1",
+			"endpoint_url": "192.168.233.3:80"
+		},
+		{
+			"type": "tcp",
+			"endpoint_name": "Printer 2",
+			"endpoint_url": "192.168.233.5:80"
+		},
+		{
+			"type": "tcp",
+			"endpoint_name": "PoS Tablet",
+			"endpoint_url": "192.168.233.49:80"
+		}
+	],
+	"storage": {
+		"provider": "github",
+                "access_token": "HIDDEN",
+                "repository_owner": "tobru",
+                "repository_name": "fwu-pos-statuspage",
+                "committer_name": "Checkup on PoS",
+                "committer_email": "pos@feuerwehrurdorf.ch",
+                "branch": "gh-pages",
+                "dir": "updates"
+	}
+}

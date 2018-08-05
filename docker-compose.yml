@@ -47,6 +47,14 @@ services:
     networks:
       localnet:
         ipv4_address: 10.5.0.5
+  monitoring:
+    build: ./monitoring
+    command: checkup every 10m
+    volumes:
+      - ./checkup.json:/opt/checkup/checkup.json:ro
+    networks:
+      localnet:
+        ipv4_address: 10.5.0.6
 volumes:
   odoo-web-data:
   odoo-db-data:
