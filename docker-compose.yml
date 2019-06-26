@@ -8,12 +8,16 @@ services:
       - 80:8069
     volumes:
       - odoo-web-data:/var/lib/odoo
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
     networks:
       localnet:
         ipv4_address: 10.5.0.2
-  posbox:
-    build: ./posbox
-    command: -- --load=web,hw_proxy,hw_posbox_homepage,hw_escpos,hw_screen,hw_printer_network
+  iotbox:
+    build: ./iotbox
+    command: -- --load=web,hw_proxy,hw_posbox_homepage,hw_posbox_upgrade,hw_scale,hw_scanner,hw_escpos,hw_blackbox_be,hw_screen,hw_drivers,hw_printer_network
     ports:
       - 8070:8069
       - 8072:8072
@@ -23,8 +27,9 @@ services:
       localnet:
         ipv4_address: 10.5.0.3
   db:
-    image: postgres:9.6
+    image: postgres:10
     environment:
+      - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
       - POSTGRES_USER=odoo
       - PGDATA=/var/lib/postgresql/data/pgdata
@@ -33,28 +38,28 @@ services:
     networks:
       localnet:
         ipv4_address: 10.5.0.4
-  backup:
-    build: ./backup
-    environment:
-      - PGHOST=db
-      - PGUSER=odoo
-      - PGPASSWORD=odoo
-      - BACKUP_SCHEDULE=0 19 * * *
-    env_file: backup.env
-    volumes:
-      - odoo-db-data:/data/pg_raw:ro
-      - /home/pi:/data/home-pi:ro
-    networks:
-      localnet:
-        ipv4_address: 10.5.0.5
-  monitoring:
-    build: ./monitoring
-    command: checkup every 10m
-    volumes:
-      - ./checkup.json:/opt/checkup/checkup.json:ro
-    networks:
-      localnet:
-        ipv4_address: 10.5.0.6
+#  backup:
+#    build: ./backup
+#    environment:
+#      - PGHOST=db
+#      - PGUSER=odoo
+#      - PGPASSWORD=odoo
+#      - BACKUP_SCHEDULE=0 19 * * *
+#    env_file: backup.env
+#    volumes:
+#      - odoo-db-data:/data/pg_raw:ro
+#      - /home/pi:/data/home-pi:ro
+#    networks:
+#      localnet:
+#        ipv4_address: 10.5.0.5
+#  monitoring:
+#    build: ./monitoring
+#    command: checkup every 10m
+#    volumes:
+#      - ./checkup.json:/opt/checkup/checkup.json:ro
+#    networks:
+#      localnet:
+#        ipv4_address: 10.5.0.6
 volumes:
   odoo-web-data:
   odoo-db-data:
