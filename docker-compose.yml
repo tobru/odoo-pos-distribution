@@ -12,6 +12,7 @@ services:
       - HOST=db
       - USER=odoo
       - PASSWORD=odoo
+    hostname: web
     networks:
       localnet:
         ipv4_address: 10.5.0.2
@@ -29,6 +30,7 @@ services:
       - HOST=db
       - USER=odoo
       - PASSWORD=odoo
+    hostname: iotbox
     networks:
       localnet:
         ipv4_address: 10.5.0.3
