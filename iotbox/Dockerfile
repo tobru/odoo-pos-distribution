@@ -78,6 +78,7 @@ RUN  patch -p0 /usr/local/lib/python3.5/dist-packages/v4l2.py < /tmp/python-v4l2
      # Start CUPS - IoTBox connects to it and complains if it isn't running
   && patch -p0 /entrypoint.sh < /tmp/start-cups.patch
 
+## Cannot switch to Odoo as CUPS must run as root and CUPS must run - otherwise IoTBox complains
 #USER odoo
 
 COPY odoo.conf /etc/odoo/odoo.conf
