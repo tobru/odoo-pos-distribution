@@ -17,12 +17,18 @@ services:
         ipv4_address: 10.5.0.2
   iotbox:
     build: ./iotbox
+    depends_on:
+      - db
     command: -- --load=web,hw_proxy,hw_posbox_homepage,hw_posbox_upgrade,hw_scale,hw_scanner,hw_escpos,hw_blackbox_be,hw_screen,hw_drivers,hw_printer_network
     ports:
       - 8070:8069
       - 8072:8072
     volumes:
       - /dev/bus/usb:/dev/bus/usb
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
     networks:
       localnet:
         ipv4_address: 10.5.0.3

@@ -57,22 +57,28 @@ RUN set -x; apt-get update \
     && mkdir /usr/lib/python3/dist-packages/odoo/addons/hw_drivers/drivers
 
 RUN pip3 install \
-      pyusb==1.0.0b1 \
       evdev \
       gatt \
-      v4l2 \
+      phonenumbers \
       polib \
-      pycups
-
-# See https://bugs.launchpad.net/python-v4l2/+bug/1664158
-COPY python-v4l2-1664158-fix.patch /tmp
-RUN patch -p0 /usr/local/lib/python3.5/dist-packages/v4l2.py < /tmp/python-v4l2-1664158-fix.patch
-
-#USER odoo
+      pycups \
+      pyusb==1.0.0b1 \
+      v4l2
 
 ## Get pos-addons for pos_printer_network
 RUN git clone --depth=1 -b 12.0 https://github.com/it-projects-llc/pos-addons.git \
     /opt/posbox/addons
 
+## Apply some patches
+COPY patches/*.patch /tmp/
+# See https://bugs.launchpad.net/python-v4l2/+bug/1664158
+RUN  patch -p0 /usr/local/lib/python3.5/dist-packages/v4l2.py < /tmp/python-v4l2-1664158-fix.patch \
+     # Disable Bluetooth in driver, doesn't work in Docker and isn't needed for the PoS use-case
+  && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_drivers/controllers/driver.py < /tmp/disable-bluetooth-driver.patch \
+     # Start CUPS - IoTBox connects to it and complains if it isn't running
+  && patch -p0 /entrypoint.sh < /tmp/start-cups.patch
+
+#USER odoo
+
 COPY odoo.conf /etc/odoo/odoo.conf
-COPY entrypoint.sh /
+

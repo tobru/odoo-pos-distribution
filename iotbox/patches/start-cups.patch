@@ -1,0 +1,10 @@
+--- entrypoint.sh.orig	2019-06-27 22:17:01.881714065 +0200
++++ entrypoint.sh	2019-06-27 22:16:08.094244835 +0200
+@@ -26,6 +26,7 @@
+ case "$1" in
+     -- | odoo)
+         shift
++        /etc/init.d/cups start
+         if [[ "$1" == "scaffold" ]] ; then
+             exec odoo "$@"
+         else

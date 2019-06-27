@@ -1,0 +1,12 @@
+--- driver.py.orig	2019-06-27 22:11:55.411759929 +0200
++++ driver.py	2019-06-27 22:12:02.794867070 +0200
+@@ -396,6 +396,6 @@
+ m.daemon = True
+ m.start()
+ 
+-bm = BtManager()
+-bm.daemon = True
+-bm.start()
++#bm = BtManager()
++#bm.daemon = True
++#bm.start()
