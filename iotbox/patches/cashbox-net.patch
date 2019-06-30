@@ -1,0 +1,50 @@
+--- hw_printer_network_controller.py.orig	2019-06-30 16:49:26.148283215 +0200
++++ hw_printer_network_controller.py	2019-06-30 16:51:36.655439168 +0200
+@@ -129,6 +129,21 @@
+                             # add a missed order to queue
+                             time.sleep(3)
+                             self.queue.put((timestamp, task, data))
++                elif task == 'cashbox':
++                    printer_info = self.get_network_printer(data)
++                    printer = self.printer_objects.get(data, None)
++                    if printer_info and printer_info['status'] == 'online' and printer:
++                        _logger.info('Opening cashbox on printer %s...', data)
++                        try:
++                            printer.cashdraw(2)
++                            printer.cashdraw(5)
++                        except socket.error:
++                            printer.open()
++                            printer.cashdraw(2)
++                            printer.cashdraw(5)
++                        _logger.info('Done opening cashbox on printer %s', data)
++                    else:
++                        _logger.error('cashbox: printer offline!')
+                 elif task == 'printstatus':
+                     pass
+                 elif task == 'status':
+@@ -168,10 +183,16 @@
+     @http.route('/hw_proxy/print_xml_receipt', type='json', auth='none', cors='*')
+     def print_xml_receipt(self, receipt, proxy=None):
+         if proxy:
++            _logger.info('print_xml_receipt proxy %s', proxy) 
+             network_driver.push_task('xml_receipt', (receipt, proxy))
+         else:
+             super(UpdatedEscposProxy, self).print_xml_receipt(receipt)
+ 
++    @http.route('/hw_proxy/open_cashbox', type='json', auth='none', cors='*')
++    def open_cashbox(self, proxy=None):
++        _logger.info('Open cashbox via network printer') 
++        network_driver.push_task('cashbox', '192.168.233.3')
++
+     @http.route('/hw_proxy/network_printers', type='json', auth='none', cors='*')
+     def network_printers(self, network_printers=None):
+         for printer in network_printers:
+@@ -180,3 +201,8 @@
+     @http.route('/hw_proxy/status_network_printers', type='json', auth='none', cors='*')
+     def network_printers_status(self):
+         return network_driver.network_printers
++
++    @http.route('/hw_proxy/without_usb', type='http', auth='none', cors='*')
++    def without_usb(self):
++        """ Old pos_printer_network module expects this to work """
++        return "ping"

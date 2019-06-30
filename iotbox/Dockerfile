@@ -81,7 +81,9 @@ RUN  patch -p0 /usr/local/lib/python3.5/dist-packages/v4l2.py < /tmp/python-v4l2
      # Start CUPS - IoTBox connects to it and complains if it isn't running
   && patch -p0 /entrypoint.sh < /tmp/start-cups.patch \
      # Strings must be UTF-8 for correct printing
-  && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_escpos/escpos/printer.py < /tmp/utf8-to-printer.patch
+  && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_escpos/escpos/printer.py < /tmp/utf8-to-printer.patch \
+     # Add cashbox networking support
+  && patch -p0 /opt/posbox/addons/hw_printer_network/controllers/hw_printer_network_controller.py < /tmp/cashbox-net.patch
 
 ## Cannot switch to Odoo as CUPS must run as root and CUPS must run - otherwise IoTBox complains
 #USER odoo
