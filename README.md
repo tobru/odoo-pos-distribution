@@ -1,9 +1,20 @@
-# Odoo PosBox in Docker
+# Odoo IoT Bock in Docker
 
-Dockerfiles and Docker Compose configuration for running
-Odoo PosBox in Docker. It additionally contains 
-[pos-addons](https://github.com/it-projects-llc/pos-addons)
+Dockerfiles and Docker Compose configuration for running Odoo IoT Box in Docker.
+
+Additionally it contains  [pos-addons](https://github.com/it-projects-llc/pos-addons)
 for using receipt printers over the network.
+
+## Quickstart
+
+1. `docker-compose up`
+1. Connect to Odoo and create a new database
+1. Install Odoo Apps:
+  * "Point of Sale"
+  * "POS Network Printer"
+1. (Enable "Developer mode" under Odoo settings)
+1. Configure PoS for IoT Box (see docs/iotbox-config.png)
+1. Configure Order Printer (see docs/orderprinter.png)
 
 ## Backup configuration
 
@@ -26,3 +37,7 @@ Restore of DB:
 createdb -T template0 restoretest
 pg_restore -d restoretest /data/odoo_data.dump
 ```
+
+## Notes
+
+* Connection from PoS Tablet to IoT Box is a direct connection, not via Odoo server!
