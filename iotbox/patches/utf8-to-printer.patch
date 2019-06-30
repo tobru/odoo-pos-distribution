@@ -1,0 +1,11 @@
+--- printer.py.orig	2019-06-30 14:11:38.387716789 +0200
++++ printer.py	2019-06-30 14:12:37.508289596 +0200
+@@ -211,6 +211,8 @@
+ 
+ 
+     def _raw(self, msg):
++        if type(msg) is str:
++            msg = msg.encode("utf-8")
+         self.device.send(msg)
+ 
+ 

@@ -65,6 +65,9 @@ RUN pip3 install \
       pyusb==1.0.0b1 \
       v4l2
 
+# Add odoo.conf which sets addons path
+COPY odoo.conf /etc/odoo/odoo.conf
+
 ## Get pos-addons for pos_printer_network
 RUN git clone --depth=1 -b 12.0 https://github.com/it-projects-llc/pos-addons.git \
     /opt/posbox/addons
@@ -76,10 +79,9 @@ RUN  patch -p0 /usr/local/lib/python3.5/dist-packages/v4l2.py < /tmp/python-v4l2
      # Disable Bluetooth in driver, doesn't work in Docker and isn't needed for the PoS use-case
   && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_drivers/controllers/driver.py < /tmp/disable-bluetooth-driver.patch \
      # Start CUPS - IoTBox connects to it and complains if it isn't running
-  && patch -p0 /entrypoint.sh < /tmp/start-cups.patch
+  && patch -p0 /entrypoint.sh < /tmp/start-cups.patch \
+     # Strings must be UTF-8 for correct printing
+  && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_escpos/escpos/printer.py < /tmp/utf8-to-printer.patch
 
 ## Cannot switch to Odoo as CUPS must run as root and CUPS must run - otherwise IoTBox complains
 #USER odoo
-
-COPY odoo.conf /etc/odoo/odoo.conf
-
