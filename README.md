@@ -42,4 +42,5 @@ pg_restore -d restoretest /data/odoo_data.dump
 
 * Connection from PoS Tablet to IoT Box is a direct connection, not via Odoo server!
 * Support for opening the cashbox via network printer has been patched. The IP is hardcoded
-  to 192.168.233.3. See 0c6ecfdd and [#730](https://github.com/it-projects-llc/pos-addons/issues/730]).
+  to 192.168.233.3. See [0c6ecfdd](https://github.com/tobru/posbox-docker/commit/0c6ecfdd470dad07b9f9c26ecc0fd413c6d605b1)
+  and [#730](https://github.com/it-projects-llc/pos-addons/issues/730).
