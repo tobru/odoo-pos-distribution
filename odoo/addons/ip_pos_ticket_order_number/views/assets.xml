@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="ip_pos_ticket_order_number_assets" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/ip_pos_ticket_order_number/static/src/js/pos_ticket_order_number.js"></script>
+        </xpath>
+    </template>
+</odoo>
