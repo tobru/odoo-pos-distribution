@@ -4,7 +4,7 @@
   <!-- Printed -->
   <t t-extend="XmlReceipt">
     <t t-jquery="[t-esc='receipt.name']" t-operation="before">
-      <div style="text-align: center; font-size: 80px;" t-if="big_number">
+      <div bold="on" size="double-height" t-if="big_number">
         <t t-esc="order_number"/>
       </div>
     </t>
