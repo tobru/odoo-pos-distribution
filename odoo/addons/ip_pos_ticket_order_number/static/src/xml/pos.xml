@@ -4,7 +4,7 @@
   <!-- Printed -->
   <t t-extend="XmlReceipt">
     <t t-jquery="[t-esc='receipt.name']" t-operation="before">
-      <div bold="on" size="double-height" t-if="big_number">
+      <div bold="on" size="double" t-if="big_number">
         <t t-esc="order_number"/>
       </div>
     </t>
@@ -21,7 +21,7 @@
 
   <t t-extend="OrderChangeReceipt">
     <t t-jquery="t[t-if='changes.new.length > 0']" t-operation="after">
-      <div bold="on" size="double-height">
+      <div bold="on" size="double">
         <t t-esc="changes.order_number"/>
       </div>
     </t>
