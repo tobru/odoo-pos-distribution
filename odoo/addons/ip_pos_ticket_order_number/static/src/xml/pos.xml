@@ -3,14 +3,14 @@
 
 	<t t-extend="XmlReceipt">
 		<t t-jquery="[t-esc='receipt.name']" t-operation="before">
-			<div bold='on' size='double-height'>
+			<div bold='on' size='double-height' t-if="big_number">
                 <t t-esc='order_number'/>
             </div>
 		</t>
 	</t>
     <t t-extend="PosTicket">
         <t t-jquery="t[t-if='receipt.footer']" t-operation="after">
-            <div style='text-align:center;font-size: 25px;'>
+            <div style='text-align:center;font-size: 25px;' t-if="big_number">
                 <b><t t-esc='order_number'/></b>
             </div>
         </t>
