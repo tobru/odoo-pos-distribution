@@ -4,9 +4,16 @@
   <!-- Printed -->
   <t t-extend="XmlReceipt">
     <t t-jquery="[t-esc='receipt.name']" t-operation="before">
-      <div bold="on" size="double" t-if="big_number">
-        <h1 size="double"><t t-esc="order_number"/></h1>
+      <div bold="on" size="double" font="b" t-if="big_number">
+        *-*-*-*-*-*-*-*-*-*-*
       </div>
+      <div bold="on" size="double" font="a" t-if="big_number">
+        Bestellnummer: <t t-esc="order_number"/>
+      </div>
+      <div bold="on" size="double" font="b" t-if="big_number">
+        *-*-*-*-*-*-*-*-*-*-*
+      </div>
+      <br/><br/>
     </t>
   </t>
 
