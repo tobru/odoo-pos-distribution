@@ -12,12 +12,11 @@ odoo.define('ip_pos_ticket_order_number.pos_ticket_order_number', function (requ
 
     Screens.ReceiptScreenWidget.include({
         get_receipt_render_env: function() {
-            var recipt = this._super();
-            debugger;
-            var number = recipt.order.name.split(' ')[1].split('-').pop()
-            recipt['order_number'] = Number(number).toString();
-            recipt['big_number'] = recipt.order.big_number;
-            return recipt;
+            var receipt = this._super();
+            var number = receipt.order.name.split(' ')[1].split('-').pop()
+            receipt['order_number'] = Number(number).toString();
+            receipt['big_number'] = receipt.order.big_number;
+            return receipt;
         }
     });
 
@@ -34,12 +33,11 @@ odoo.define('ip_pos_ticket_order_number.pos_ticket_order_number', function (requ
             var number = res.name.split(' ')[1].split('-').pop()
             res['order_number'] = Number(number).toString()
             return res
-            
+
         },
         printChanges: function(){
             var orders = _super_order.printChanges.call(this);
             var order = this.pos.get_order()
-            debugger;
             if (order) {
                 order.set_big_number(true);
             }
