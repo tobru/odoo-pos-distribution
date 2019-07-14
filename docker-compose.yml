@@ -1,6 +1,7 @@
 version: '2'
 services:
   web:
+    image: docker.io/tobru/odoo-pos:latest-pos
     build: ./odoo
     depends_on:
       - db
@@ -17,6 +18,7 @@ services:
       localnet:
         ipv4_address: 10.5.0.2
   iotbox:
+    image: docker.io/tobru/odoo-pos:latest-iotbox
     build: ./iotbox
     depends_on:
       - db
