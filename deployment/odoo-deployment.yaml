@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: odoo
+  name: odoo
+  namespace: pos
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      containers:
+      - env:
+        - name: HOST
+          value: db
+        - name: PASSWORD
+          value: odoo
+        - name: USER
+          value: odoo
+        image: docker.io/tobru/odoo-pos:latest-pos
+        name: web
+        ports:
+        - containerPort: 8069
+        volumeMounts:
+        - mountPath: /var/lib/odoo
+          name: odoo-data
+      hostname: web
+      restartPolicy: Always
+      volumes:
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: odoo-data

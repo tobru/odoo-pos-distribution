@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: odoo
+  name: odoo
+  namespace: pos
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8069
+  selector:
+    app: odoo

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: db
+  name: db
+  namespace: pos
+spec:
+  selector:
+    matchLabels:
+      app: db
+  serviceName: db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: db
+        image: postgres:10
+        env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: odoo
+        - name: POSTGRES_USER
+          value: odoo
+        ports:
+        - containerPort: 5432
+          name: postgres
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/postgresql/data/pgdata
+  volumeClaimTemplates:
+  - metadata:
+      name: db-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 1Gi

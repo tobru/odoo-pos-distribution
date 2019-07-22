@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: iotbox
+  name: iotbox
+  namespace: pos
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: iotbox
+  template:
+    metadata:
+      labels:
+        app: iotbox
+    spec:
+      containers:
+      - args:
+        - --
+        - --load=web,hw_proxy,hw_posbox_homepage,hw_posbox_upgrade,hw_scale,hw_scanner,hw_escpos,hw_blackbox_be,hw_screen,hw_drivers,hw_printer_network
+        env:
+        - name: HOST
+          value: db
+        - name: PASSWORD
+          value: odoo
+        - name: USER
+          value: odoo
+        image: docker.io/tobru/odoo-pos:latest-iotbox
+        name: iotbox
+        ports:
+        - containerPort: 8069
+        - containerPort: 8072
+      hostname: iotbox
+      restartPolicy: Always
