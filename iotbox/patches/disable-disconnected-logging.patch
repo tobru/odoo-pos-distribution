@@ -1,0 +1,10 @@
+--- main.py.orig	2019-07-23 21:09:59.278876123 +0200
++++ main.py	2019-07-23 21:19:12.726843102 +0200
+@@ -112,7 +112,6 @@
+             )
+             return print_dev
+         else:
+-            self.set_status('disconnected','Printer Not Found')
+             return None
+ 
+     def get_status(self):
