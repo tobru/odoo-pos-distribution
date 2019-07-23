@@ -26,6 +26,7 @@ spec:
         - name: USER
           value: odoo
         image: docker.io/tobru/odoo-pos:latest-pos
+        imagePullPolicy: Always
         name: web
         ports:
         - containerPort: 8069
@@ -34,7 +35,6 @@ spec:
           name: odoo-data
       hostname: web
       restartPolicy: Always
-      imagePullPolicy: Always
       volumes:
       - name: odoo-data
         persistentVolumeClaim:

@@ -29,10 +29,10 @@ spec:
         - name: USER
           value: odoo
         image: docker.io/tobru/odoo-pos:latest-iotbox
+        imagePullPolicy: Always
         name: iotbox
         ports:
         - containerPort: 8069
         - containerPort: 8072
       hostname: iotbox
       restartPolicy: Always
-      imagePullPolicy: Always
