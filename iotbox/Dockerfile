@@ -82,6 +82,8 @@ RUN  patch -p0 /usr/local/lib/python3.5/dist-packages/v4l2.py < /tmp/python-v4l2
   && patch -p0 /entrypoint.sh < /tmp/start-cups.patch \
      # Strings must be UTF-8 for correct printing
   && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_escpos/escpos/printer.py < /tmp/utf8-to-printer.patch \
+     # Disable log messages about disconnected drivers - unneeded and clutters logfile with useless messages
+  && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_escpos/controllers/main.py < /tmp/disable-disconnected-logging.patch \
      # Add cashbox networking support
   && patch -p0 /opt/posbox/addons/hw_printer_network/controllers/hw_printer_network_controller.py < /tmp/cashbox-net.patch
 
