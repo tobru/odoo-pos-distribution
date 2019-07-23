@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: odoo
+  name: odoo
+  namespace: pos
+spec:
+  rules:
+  - host: pos
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: odoo
+          servicePort: 80

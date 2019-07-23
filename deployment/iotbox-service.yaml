@@ -7,11 +7,8 @@ metadata:
   namespace: pos
 spec:
   ports:
-  - name: "8070"
-    port: 8070
+  - name: http
+    port: 80
     targetPort: 8069
-  - name: "8072"
-    port: 8072
-    targetPort: 8072
   selector:
     app: iotbox

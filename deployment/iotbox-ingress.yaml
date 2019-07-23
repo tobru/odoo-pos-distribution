@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: iotbox
+  name: iotbox
+  namespace: pos
+spec:
+  rules:
+  - host: iotbox
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: iotbox
+          servicePort: 80
