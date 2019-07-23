@@ -35,3 +35,4 @@ spec:
         - containerPort: 8072
       hostname: iotbox
       restartPolicy: Always
+      imagePullPolicy: Always
