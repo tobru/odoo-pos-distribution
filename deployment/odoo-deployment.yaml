@@ -38,8 +38,8 @@ spec:
           initialDelaySeconds: 300
           periodSeconds: 30
           timeoutSeconds: 5
-          successThreshold: 6
-          failureThreshold: 1
+          successThreshold: 1
+          failureThreshold: 6
         readinessProbe:
           httpGet:
             path: /
@@ -47,8 +47,8 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
-          successThreshold: 6
-          failureThreshold: 1
+          successThreshold: 1
+          failureThreshold: 6
         volumeMounts:
         - mountPath: /var/lib/odoo
           name: odoo-data
