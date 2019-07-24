@@ -32,7 +32,25 @@ spec:
         imagePullPolicy: Always
         name: iotbox
         ports:
-        - containerPort: 8069
-        - containerPort: 8072
+        - name: http
+          containerPort: 8069
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 300
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 6
+          failureThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 6
+          failureThreshold: 1
       hostname: iotbox
       restartPolicy: Always

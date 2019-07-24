@@ -29,7 +29,26 @@ spec:
         imagePullPolicy: Always
         name: web
         ports:
-        - containerPort: 8069
+        - name: http
+          containerPort: 8069
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 300
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 6
+          failureThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 6
+          failureThreshold: 1
         volumeMounts:
         - mountPath: /var/lib/odoo
           name: odoo-data
