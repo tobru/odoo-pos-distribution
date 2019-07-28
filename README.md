@@ -44,6 +44,22 @@ Continue with "Odoo PoS configuration"
 
 More hardware description and a network diagram: tbd.
 
+## Monitoring
+
+There are two kinds of monitoring prepared: The cluster itself and the PoS
+application.
+
+### Simple Cluster Healthcheck
+
+Under `contrib/healthchecks-cronjob.yaml` a simple Kubernetes cronjob is
+provided which regularly pings [Healthchecks.io](https://healthchecks.io/).
+
+A secret with the ping URL needs to be added before the CronJobs does it's work:
+
+```
+kubectl -n hc create secret generic healthchecks-io --from-literal=HCURL=https://hc-ping.com/MYUUID
+```
+
 ## Backup configuration
 
 Example contents of `backup.env`:
