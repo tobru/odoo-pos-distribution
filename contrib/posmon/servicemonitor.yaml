@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: blackboxmon
+  namespace: posmon
+  labels:
+    app: pos
+spec:
+  selector:
+    matchLabels:
+      app: blackbox-exporter
+  endpoints:
+  - port: http

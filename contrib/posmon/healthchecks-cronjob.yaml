@@ -2,7 +2,7 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: healthchecks-io
-  namespace: hc
+  namespace: posmon
 spec:
   schedule: "*/1 * * * *"
   concurrencyPolicy: Forbid

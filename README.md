@@ -57,8 +57,22 @@ provided which regularly pings [Healthchecks.io](https://healthchecks.io/).
 A secret with the ping URL needs to be added before the CronJobs does it's work:
 
 ```
-kubectl -n hc create secret generic healthchecks-io --from-literal=HCURL=https://hc-ping.com/MYUUID
+kubectl -n posmon create secret generic healthchecks-io --from-literal=HCURL=https://hc-ping.com/MYUUID
 ```
+
+### Application and network monitoring
+
+Application monitoring is done using Prometheus, Alertmanager and
+Blackbox exporter. No application specific exporters are used, so
+it's just a base monitoring to answer the question: "Is it up?".
+
+1. Install [prometheus-operator](https://github.com/coreos/prometheus-operator)
+   F.e.: `kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/bundle.yaml`
+2. Apply manifests: `kubectl apply -f contrib/posmon/`
+3. Create secret for extra scrape config:
+   `kubectl -n posmon create secret generic additional-scrape-configs --from-file=contrib/pos-blackbox-exporter-scrape.yaml`
+4. Create secret for Alertmanager config:
+   `kubectl -n posmon create secret generic alertmanager-posmon --from-file=contrib/alertmanager.yaml`
 
 ## Backup configuration
 

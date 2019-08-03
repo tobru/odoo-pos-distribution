@@ -1,0 +1,48 @@
+- job_name: 'blackbox_http'
+  metrics_path: /probe
+  scrape_interval: 1m
+  params:
+    module: [http_2xx]
+  static_configs:
+    - targets:
+      - http://odoo.pos.svc.cluster.local
+      - http://iotbox.pos.svc.cluster.local
+      - http://192.168.233.1
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: blackbox-exporter:9115
+- job_name: 'blackbox_tcp'
+  metrics_path: /probe
+  scrape_interval: 1m
+  params:
+    module: [tcp_connect]
+  static_configs:
+    - targets:
+      - db.pos.svc.cluster.local:5432
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: blackbox-exporter:9115
+- job_name: 'blackbox_icmp'
+  metrics_path: /probe
+  scrape_interval: 1m
+  params:
+    module: [icmp]
+  static_configs:
+    - targets:
+      - 192.168.233.3
+      - 192.168.233.5
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: blackbox-exporter:9115

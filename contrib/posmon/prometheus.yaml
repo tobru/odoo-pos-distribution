@@ -1,0 +1,42 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: posmon
+  namespace: posmon
+spec:
+  serviceAccountName: prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      app: pos
+  resources:
+    requests:
+      memory: 400Mi
+  enableAdminAPI: false
+  additionalScrapeConfigs:
+    name: additional-scrape-configs
+    key: pos-blackbox-exporter-scrape.yaml
+  alerting:
+    alertmanagers:
+    - namespace: posmon
+      name: alertmanager-posmon
+      port: web
+  ruleSelector:
+    matchLabels:
+      role: alert-rules
+      prometheus: posmon
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-posmon
+  namespace: posmon
+spec:
+  type: NodePort
+  ports:
+  - name: web
+    nodePort: 30909
+    port: 9090
+    protocol: TCP
+    targetPort: web
+  selector:
+    prometheus: posmon

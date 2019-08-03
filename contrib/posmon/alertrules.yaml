@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: posmon
+    role: alert-rules
+  name: posmon-rules
+  namespace: posmon
+spec:
+  groups:
+  - name: ./posmon.rules
+    rules:
+    - alert: TargetDown
+      expr: probe_success < 1
