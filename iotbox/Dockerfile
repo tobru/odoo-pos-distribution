@@ -70,7 +70,9 @@ COPY odoo.conf /etc/odoo/odoo.conf
 
 ## Get pos-addons for pos_printer_network
 RUN git clone --depth=1 -b 12.0 https://github.com/it-projects-llc/pos-addons.git \
-    /opt/posbox/addons
+    /opt/posbox/addons \
+ && git clone --depth=1 -b 12.0 https://github.com/camptocamp/odoo-cloud-platform.git \
+    /opt/posbox/cloud-addons
 
 ## Apply some patches
 COPY patches/*.patch /tmp/
