@@ -1,0 +1,18 @@
+apiVersion: backup.appuio.ch/v1alpha1
+kind: Schedule
+metadata:
+  name: pos-backup
+  namespace: pos
+spec:
+  backup:
+    schedule: '*/1 * * * *'
+    keepJobs: 4
+  check:
+    schedule: '0 1 * * 1'
+  prune:
+    schedule: '0 1 * * 0'
+    retention:
+      keepLast: 10
+      keepDaily: 14
+
+
