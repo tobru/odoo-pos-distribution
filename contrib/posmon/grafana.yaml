@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+  namespace: posmon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - image: grafana/grafana:6.3.0-beta4
+        name: grafana
+        ports:
+        - containerPort: 3000
+          name: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-nodeport
+  namespace: posmon
+spec:
+  ports:
+  - name: web
+    nodePort: 30904
+    port: 3000
+    protocol: TCP
+    targetPort: web
+  selector:
+    app: grafana
+  type: NodePort
