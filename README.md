@@ -74,22 +74,17 @@ it's just a base monitoring to answer the question: "Is it up?".
 4. Create secret for Alertmanager config:
    `kubectl -n posmon create secret generic alertmanager-posmon --from-file=contrib/alertmanager.yaml`
 
-## Backup configuration
+## Backup
 
-Example contents of `backup.env`:
+Backup is done using [K8up](https://k8up.io/).
 
-```
-RESTIC_REPOSITORY=rclone:myremote:posbackup
-RESTIC_PASSWORD=extremelysecurepassword
-RCLONE_CONFIG_FWUCLOUD_TYPE=webdav
-RCLONE_CONFIG_FWUCLOUD_URL=https://nextcloud.example.com/remote.php/webdav/
-RCLONE_CONFIG_FWUCLOUD_VENDOR=nextcloud
-RCLONE_CONFIG_FWUCLOUD_USER=backupuser
-RCLONE_CONFIG_FWUCLOUD_PASS=encryptedpassword
-PGDATABASE=odoodbname
-```
+1. Install K8up
+2. Apply manifests under `contrib/backup`
 
-Restore of DB:
+### Restore
+
+tbd...
+
 
 ```
 createdb -T template0 restoretest

@@ -13,6 +13,8 @@ spec:
   replicas: 1
   template:
     metadata:
+      annotations:
+        appuio.ch/backupcommand: pg_dumpall
       labels:
         app: db
     spec:
@@ -27,7 +29,11 @@ spec:
           value: postgres
         - name: POSTGRES_PASSWORD
           value: odoo
+        - name: PGPASSWORD
+          value: odoo
         - name: POSTGRES_USER
+          value: odoo
+        - name: PGUSER
           value: odoo
         ports:
         - containerPort: 5432
@@ -38,6 +44,8 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: db-data
+      annotations:
+        appuio.ch/backup: "true"
     spec:
       accessModes:
       - ReadWriteOnce

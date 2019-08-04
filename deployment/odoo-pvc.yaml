@@ -5,6 +5,8 @@ metadata:
     app: odoo
   name: odoo-data
   namespace: pos
+  annotations:
+    appuio.ch/backup: "true"
 spec:
   accessModes:
   - ReadWriteOnce
