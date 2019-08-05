@@ -12,3 +12,8 @@ spec:
     rules:
     - alert: TargetDown
       expr: probe_success < 1
+      labels:
+        severity: critical
+      annotations:
+        description: The target {{$labels.instance}} is down
+        title: Target Down
