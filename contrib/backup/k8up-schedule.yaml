@@ -5,14 +5,11 @@ metadata:
   namespace: pos
 spec:
   backup:
-    schedule: '*/1 * * * *'
+    schedule: '*/15 * * * *'
     keepJobs: 4
-  check:
-    schedule: '0 1 * * 1'
   prune:
-    schedule: '0 1 * * 0'
+    schedule: '0 * * * *'
     retention:
       keepLast: 10
-      keepDaily: 14
 
 
