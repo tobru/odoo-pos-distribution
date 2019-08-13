@@ -1,5 +1,5 @@
 odoo.define('ip_pos_ticket_order_number.pos_ticket_order_number', function (require) {
-"use strict";
+    "use strict";
 
     var Screens = require('point_of_sale.screens');
     var MultiPrint = require('pos_restaurant.multiprint');
@@ -28,20 +28,19 @@ odoo.define('ip_pos_ticket_order_number.pos_ticket_order_number', function (requ
                 this.big_number = false;
             } 
         },
-        computeChanges: function(categories){
-            var res = _super_order.computeChanges.apply(this, categories)
-            var number = res.name.split(' ')[1].split('-').pop()
-            res['order_number'] = Number(number).toString()
-            return res
-
-        },
         printChanges: function(){
-            var orders = _super_order.printChanges.call(this);
-            var order = this.pos.get_order()
-            if (order) {
-                order.set_big_number(true);
+            var printers = this.pos.printers;
+            for(var i = 0; i < printers.length; i++){
+                var changes = this.computeChanges(printers[i].config.product_categories_ids);
+                if ( changes['new'].length > 0 || changes['cancelled'].length > 0){
+                    var number = changes.name.split(' ')[1].split('-').pop()
+                    changes['order_number'] = Number(number).toString()
+                    var order = this.pos.get_order()
+                    if (order) {order.set_big_number(true);}
+                    var receipt = QWeb.render('OrderChangeReceipt',{changes:changes, widget:this});
+                    printers[i].print(receipt);
+                }
             }
-            return orders
         },
         set_big_number: function(val){
             this.big_number = val;
