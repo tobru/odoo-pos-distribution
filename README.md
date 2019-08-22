@@ -97,3 +97,25 @@ pg_restore -d restoretest /data/odoo_data.dump
 * Support for opening the cashbox via network printer has been patched. The IP is hardcoded
   to 192.168.233.3. See [0c6ecfdd](https://github.com/tobru/posbox-docker/commit/0c6ecfdd470dad07b9f9c26ecc0fd413c6d605b1)
   and [#730](https://github.com/it-projects-llc/pos-addons/issues/730).
+
+## Docker Images
+
+Docker images are automatically built on [Docker Hub](https://cloud.docker.com/repository/docker/tobru/odoo-pos).
+
+* `docker.io/tobru/odoo-pos:latest-iotbox`: IoT Box
+* `docker.io/tobru/odoo-pos:latest-pos`: Odoo
+
+Images for ARM64 (f.e. Raspberry Pi) are _not_ automatically built as this
+is not supported by Docker Hub. They are build manually on a Raspberry Pi
+and uploaded to Docker Hub. Dockerfiles are provided named `Dockerfile.arm64v8`.
+
+## TODOs
+
+* [ ] Pre-install `monitoring_status` and use for K8s probes
+* [ ] Point Blackbox Monitoring to `/monitoring/status`
+* [ ] Tweak monitoring rules
+* [ ] Mirror important add-ons to this repository
+* [ ] Configure `server_wide_modules` instead of using command line parameters
+  * [ ] Odoo: `base,web,monitoring_status`
+* [ ] Automatically install PoS modules
+* [ ] Improve arm builds
