@@ -100,14 +100,25 @@ pg_restore -d restoretest /data/odoo_data.dump
 
 ## Docker Images
 
-Docker images are automatically built on [Docker Hub](https://cloud.docker.com/repository/docker/tobru/odoo-pos).
+Docker images are automatically built on [Docker Hub](https://cloud.docker.com/repository/docker/tobru/odoo-pos) (for amd64 arch).
 
 * `docker.io/tobru/odoo-pos:latest-iotbox`: IoT Box
 * `docker.io/tobru/odoo-pos:latest-pos`: Odoo
 
 Images for ARM64 (f.e. Raspberry Pi) are _not_ automatically built as this
-is not supported by Docker Hub. They are build manually on a Raspberry Pi
-and uploaded to Docker Hub. Dockerfiles are provided named `Dockerfile.arm64v8`.
+is not supported by Docker Hub. They are built manually on a Raspberry Pi
+and uploaded to Docker Hub.
+
+* `docker.io/tobru/odoo-pos:latest-iotbox-arm64v7`: IoT Box
+* `docker.io/tobru/odoo-pos:latest-pos-arm64v7`: Odoo
+
+As the [upstream Odoo](https://hub.docker.com/_/odoo/) doesn't support
+`linux/arm/v7` even the base image needs to be built on the Raspberry Pi:
+
+1. Clone https://github.com/odoo/docker
+2. Change `wkhtmltox` to install `raspbian.stretch_armhf.deb`
+3. Build with `docker build -t local/odoo:12 .`
+4. Patch local Dockerfiles to use this as base image
 
 ## TODOs
 
