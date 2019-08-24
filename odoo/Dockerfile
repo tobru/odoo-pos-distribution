@@ -9,7 +9,9 @@ RUN set -x; apt-get update \
     && git clone --depth=1 -b 12.0 https://github.com/it-projects-llc/pos-addons.git \
       /opt/posbox/pos-addons \
     && git clone --depth=1 -b 12.0 https://github.com/camptocamp/odoo-cloud-platform.git \
-      /opt/posbox/cloud-addons
+      /opt/posbox/cloud-addons \
+    && git clone --depth=1 -b 12.0 https://github.com/CybroOdoo/CybroAddons.git \
+      /opt/posbox/cybro-addons
 
 COPY odoo.conf /etc/odoo/odoo.conf
 COPY addons/ /opt/posbox/extra-addons
