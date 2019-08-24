@@ -130,3 +130,4 @@ As the [upstream Odoo](https://hub.docker.com/_/odoo/) doesn't support
   * [ ] Odoo: `base,web,monitoring_status`
 * [ ] Automatically install PoS modules
 * [ ] Improve arm builds
+* [ ] Support for adding third-party commercial Odoo addons
