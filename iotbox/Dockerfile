@@ -87,7 +87,9 @@ RUN  patch -p0 /usr/local/lib/python3.5/dist-packages/v4l2.py < /tmp/python-v4l2
      # Disable log messages about disconnected drivers - unneeded and clutters logfile with useless messages
   && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_escpos/controllers/main.py < /tmp/disable-disconnected-logging.patch \
      # Add cashbox networking support
-  && patch -p0 /opt/posbox/addons/hw_printer_network/controllers/hw_printer_network_controller.py < /tmp/cashbox-net.patch
+  && patch -p0 /opt/posbox/addons/hw_printer_network/controllers/hw_printer_network_controller.py < /tmp/cashbox-net.patch \
+     # Remove fix from https://github.com/odoo/odoo/pull/35368 as this breaks network printing
+  && patch -p0 /usr/lib/python3/dist-packages/odoo/addons/hw_escpos/escpos/escpos.py < /tmp/remove_get_printer_status.patch
 
 ## Cannot switch to Odoo as CUPS must run as root and CUPS must run - otherwise IoTBox complains
 #USER odoo

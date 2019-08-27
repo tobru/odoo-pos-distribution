@@ -1,0 +1,11 @@
+--- escpos.py.orig	2019-08-27 10:48:53.402884574 +0200
++++ escpos.py	2019-08-27 10:49:01.762946864 +0200
+@@ -908,8 +908,6 @@
+         else:
+             raise CashDrawerError()
+ 
+-        self.get_printer_status()
+-
+     def hw(self, hw):
+         """ Hardware operations """
+         if hw.upper() == "INIT":
