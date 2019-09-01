@@ -3,9 +3,6 @@
 Dockerfiles, Docker Compose and Kubernetes configuration for running an Odoo based PoS
 in container and Kubernets.
 
-Additionally it contains  [pos-addons](https://github.com/it-projects-llc/pos-addons)
-for using receipt printers over the network.
-
 ## Quickstart
 
 ### Docker Compose
@@ -16,7 +13,7 @@ Continue with "Odoo PoS configuration"
 
 ### Kubernetes / K3s
 
-The provided YAML files have been developed and tested with [k3s](https://k3s.io/).
+The provided YAML files have been developed and tested with [k3s](https://k3s.io/) on amd64 and arm64.
 Installation will happen in the namespace `pos`.
 
 1. Install [k3s](https://k3s.io/) (any other Kubernetes should work as well)
@@ -35,6 +32,28 @@ Continue with "Odoo PoS configuration"
 1. (Enable "Developer mode" under Odoo settings)
 1. Configure PoS for IoT Box (see docs/iotbox-config.png)
 1. Configure Order Printer (see docs/orderprinter.png)
+
+## Odoo Addons
+
+The default addons from Odoo core are not enough for a smooth PoS experience,
+therefore a good amount of other PoS addons can be used. This distributions adds
+the following addon sources:
+
+* [pos-addons](https://github.com/it-projects-llc/pos-addons):
+  * `hw_printer_network` && `pos_printer_network`: Support for network receipt printer
+* [odoo-cloud-platform](https://github.com/camptocamp/odoo-cloud-platform):
+  * `monitoring_status`: Status endpoint for Odoo
+* [CybroAddons](https://github.com/CybroOdoo/CybroAddons):
+  * `pos_product_category_filter`: Only show selected product categories on the PoS view
+
+The following addons are delivered in this repository:
+
+* `ip_pos_ticket_order_number`: Custom made module to print a big order number both on
+  the receipt and kitchen order
+* `pos_product_sequence`: Commercial module to manually order products (default is
+  alphabetically). You're not allowed to use this module unless you bought it as
+  well. See [POS Product Sequence](https://apps.odoo.com/apps/modules/12.0/pos_product_sequence/)
+  on the Odoo app store.
 
 ## Hardware and Networking
 
@@ -105,6 +124,10 @@ Docker images are automatically built on [Docker Hub](https://cloud.docker.com/r
 * `docker.io/tobru/odoo-pos:latest-iotbox`: IoT Box
 * `docker.io/tobru/odoo-pos:latest-pos`: Odoo
 
+## A word on ARM / Raspberry Pi support
+
+TL;DR: It's not easy to run things out of the box on Raspberry Pi.
+
 Images for ARM64 (f.e. Raspberry Pi) are _not_ automatically built as this
 is not supported by Docker Hub. They are built manually on a Raspberry Pi
 and uploaded to Docker Hub.
@@ -120,14 +143,37 @@ As the [upstream Odoo](https://hub.docker.com/_/odoo/) doesn't support
 3. Build with `docker build -t local/odoo:12 .`
 4. Patch local Dockerfiles to use this as base image
 
+A good amount of upstream stuff doesn't work on Raspberry Pi as no multiarch
+images are provided. F.e. the proposed monitoring stack with Prometheus doesn't
+work out of the box and K8up doesn't provide arm binaries (yet).
+
+The Postgres client installed in the Odoo images is version 9.6 (it's based
+on Debian Stretch and upstream doesn't provide `armhf` packages).
+If you're using a newer Postgres version, the DB management functionality of
+Odoo (Backup/Restore) won't work because of version mismatch.
+
 ## TODOs
+
+### Distribution
 
 * [ ] Pre-install `monitoring_status` and use for K8s probes
 * [ ] Point Blackbox Monitoring to `/monitoring/status`
 * [ ] Tweak monitoring rules
 * [ ] Mirror important add-ons to this repository
-* [ ] Configure `server_wide_modules` instead of using command line parameters
+* [ ] Configure `server_wide_modules` (instead of using command line parameters)
   * [ ] Odoo: `base,web,monitoring_status`
-* [ ] Automatically install PoS modules
-* [ ] Improve arm builds
+  * [ ] Automatically install PoS modules
+* [ ] Improve arm builds and overall support (Monitoring, Backup)
 * [ ] Support for adding third-party commercial Odoo addons
+
+### PoS Usage
+
+* [ ] Configure default payment option
+* [ ] Don't open cash drawer for virtual payment (Twint, SumUp)
+* [ ] Possibility to print a kitchen order ticket per position (not summarized)
+
+## Disclaimer
+
+This is a hobby project and is not actively maintained. I don't provide _any_
+support! If you feel like contributing something, that's of course appreciated.
+Feel free to open a Pull Request.
