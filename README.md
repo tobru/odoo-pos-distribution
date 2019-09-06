@@ -1,7 +1,7 @@
-# Odoo Pos Distribution
+# Odoo Point of Sale - PoS - Distribution
 
 Dockerfiles, Docker Compose and Kubernetes configuration for running an Odoo based PoS
-in container and Kubernets.
+in containers.
 
 ## Quickstart
 
@@ -16,7 +16,7 @@ Continue with "Odoo PoS configuration"
 The provided YAML files have been developed and tested with [k3s](https://k3s.io/) on amd64 and arm64.
 Installation will happen in the namespace `pos`.
 
-1. Install [k3s](https://k3s.io/) (any other Kubernetes should work as well)
+1. Install [k3s](https://k3s.io/), f.e. using [k3sup](https://k3sup.dev/) (any other Kubernetes should work as well)
 1. Install [local-path-provisioner](https://github.com/rancher/local-path-provisioner)
 1. Apply the deployment YAMLs: `kubectl apply -f deployment/`
 
@@ -26,17 +26,17 @@ Continue with "Odoo PoS configuration"
 
 1. Connect to Odoo and create a new database
    On Kubernetes the Ingress defines the hostnames `pos` and `iotbox`
-1. Install Odoo Apps:
+1. Install some Odoo Addons:
   * "Point of Sale"
   * "POS Network Printer"
 1. (Enable "Developer mode" under Odoo settings)
-1. Configure PoS for IoT Box (see docs/iotbox-config.png)
-1. Configure Order Printer (see docs/orderprinter.png)
+1. Configure PoS for IoT Box (see screenshots under `docs/`)
+1. Configure Order Printer (see screenshots under `docs/`)
 
 ## Odoo Addons
 
 The default addons from Odoo core are not enough for a smooth PoS experience,
-therefore a good amount of other PoS addons can be used. This distributions adds
+therefore a good amount of PoS addons can be used. This distributions adds
 the following addon sources:
 
 * [pos-addons](https://github.com/it-projects-llc/pos-addons):
@@ -57,11 +57,68 @@ The following addons are delivered in this repository:
 
 ## Hardware and Networking
 
-* Default network assumed: `192.168.233.0/24`
-* Printers: 192.168.233.3 and 192.168.233.5
-* Printers used in this project: [Epson TM-T20II](https://www.epson.ch/products/sd/pos-printer/epson-tm-t20ii)
+```
+                                                    +
+                           +----------------+       |
+													 | Raspberry Pi 4 |   WLAN|
+													 | (K3s, Pi-hole) | +-----+
+													 | DHCP, DNS      |
+													 | 192.168.233.9  |
+                           +-------+--------+
+                                   |
+                                   |
+                   +---------------+-----------------+
+     +---------+   | Router, Switch and Access Point |
+     |WLAN         | (Mikrotik RB2011)               |
+     |             | 102.168.233.1                   |
+     |             +-----+---------------------+-----+
+     +                   |                     |
+                         |                     |
++-----------+   +--------+-------+     +-------+--------+
+| Cash desk |   | Printer 1      |     | Printer 2      |
+| tablet    |   | (Cash desk)    |     | (Kitchen)      |
+|           |   | 192.168.233.3  |     | 192.168.233.5  |
++-----------+   +-------+--------+     +----------------+
+                        |
+                        |
+                +-------+--------+
+                |  Cash drawer   |
+                +----------------+
+```
 
-More hardware description and a network diagram: tbd.
+* Default network - the posnet - assumed: `192.168.233.0/24`
+* IPs:
+  * `192.168.233.1`: Mikrotik: WLAN and Switch
+  * `192.168.233.3`: Cashdesk receipt printer with cash drawer
+  * `192.168.233.5`: Kitchen printer
+  * `192.168.233.9`: Raspberry Pi (pospi)
+	* `192.168.233.10-50`: DHCP Range
+* Printers: [Epson TM-T20II](https://www.epson.ch/products/sd/pos-printer/epson-tm-t20ii)
+
+The Raspberry Pi 4 provides DNS and DHCP to the network with [Pi-hole](https://pi-hole.net/).
+Static DNS entries `pos` and `iotbox` are added to `/etc/hosts` which
+then are served by the Pi-hole DNS server. The Pi-hole Lighttpd must
+be configured to listen on f.e. port 8080 so it doesn't conflict with
+K3s ingress. The Raspberry Pi is connected to the PoS network using an
+Ethernet connection and to the internet using WLAN. This optionally allows
+to use it as an internet gateway by adding some IPtables rules:
+
+```
+iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+```
+
+A good thing is to install Wireguard and use it as remote access to the
+Raspberry Pi.
+
+When using an Android tablet, a "kiosk" browsing app is the recommended way to
+provide the PoS webapp to the user. F.e. [Fully Single App Kiosk](https://play.google.com/store/apps/details?id=com.fullykiosk.singleapp&hl=en).
+For iPad just add the webapp to the home screen using Safari, no additional
+app is needed.
+
+An UPS is also recommended to power the setup so that short power outages don't
+interrupt the ordering process.
 
 ## Monitoring
 
@@ -72,8 +129,9 @@ application.
 
 Under `contrib/healthchecks-cronjob.yaml` a simple Kubernetes cronjob is
 provided which regularly pings [Healthchecks.io](https://healthchecks.io/).
+This helps to see if the whole thing is up and running.
 
-A secret with the ping URL needs to be added before the CronJobs does it's work:
+A secret with the ping URL needs to be added before the CronJobs can do it's work:
 
 ```
 kubectl -n posmon create secret generic healthchecks-io --from-literal=HCURL=https://hc-ping.com/MYUUID
@@ -102,20 +160,12 @@ Backup is done using [K8up](https://k8up.io/).
 
 ### Restore
 
-tbd...
-
+Restore from Restic and then do a database import:
 
 ```
 createdb -T template0 restoretest
 pg_restore -d restoretest /data/odoo_data.dump
 ```
-
-## Notes
-
-* Connection from PoS Tablet to IoT Box is a direct connection, not via Odoo server!
-* Support for opening the cashbox via network printer has been patched. The IP is hardcoded
-  to 192.168.233.3. See [0c6ecfdd](https://github.com/tobru/posbox-docker/commit/0c6ecfdd470dad07b9f9c26ecc0fd413c6d605b1)
-  and [#730](https://github.com/it-projects-llc/pos-addons/issues/730).
 
 ## Docker Images
 
@@ -126,7 +176,7 @@ Docker images are automatically built on [Docker Hub](https://cloud.docker.com/r
 
 ## A word on ARM / Raspberry Pi support
 
-TL;DR: It's not easy to run things out of the box on Raspberry Pi.
+TL;DR: It's not easy to run things out of the box on Raspberry Pi / ARM.
 
 Images for ARM64 (f.e. Raspberry Pi) are _not_ automatically built as this
 is not supported by Docker Hub. They are built manually on a Raspberry Pi
@@ -152,7 +202,19 @@ on Debian Stretch and upstream doesn't provide `armhf` packages).
 If you're using a newer Postgres version, the DB management functionality of
 Odoo (Backup/Restore) won't work because of version mismatch.
 
+## Random notes
+
+* Connection from PoS tablet to IoT Box is a direct connection, not via Odoo server!
+* Support for opening the cashbox via network printer has been patched. The IP is hardcoded
+  to 192.168.233.3. See [0c6ecfdd](https://github.com/tobru/posbox-docker/commit/0c6ecfdd470dad07b9f9c26ecc0fd413c6d605b1)
+  and [#730](https://github.com/it-projects-llc/pos-addons/issues/730).
+* Odoo 13 will probably change a lot for PoS and will need some additional work. See f.e.
+  * Commit: [pos: Replace hw_escpos by PrinterDriver](https://github.com/odoo/odoo/commit/03b2f7b77dc6189bb485e0b834dba5f6d3d4da2c#diff-14c0ea7767d884151475e057ad05ec56)
+  * Addon: [pos_epson_printer](https://github.com/odoo/odoo/tree/master/addons/pos_epson_printer)
+
 ## TODOs
+
+There are some things which could be improved:
 
 ### Distribution
 
@@ -168,7 +230,7 @@ Odoo (Backup/Restore) won't work because of version mismatch.
 
 ### PoS Usage
 
-* [ ] Configure default payment option
+* [ ] Configure default payment option (cash)
 * [ ] Don't open cash drawer for virtual payment (Twint, SumUp)
 * [ ] Possibility to print a kitchen order ticket per position (not summarized)
 
