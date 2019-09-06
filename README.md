@@ -60,10 +60,10 @@ The following addons are delivered in this repository:
 ```
                                                     +
                            +----------------+       |
-													 | Raspberry Pi 4 |   WLAN|
-													 | (K3s, Pi-hole) | +-----+
-													 | DHCP, DNS      |
-													 | 192.168.233.9  |
+                           | Raspberry Pi 4 |   WLAN|
+                           | (K3s, Pi-hole) | +-----+
+                           | DHCP, DNS      |
+                           | 192.168.233.9  |
                            +-------+--------+
                                    |
                                    |
@@ -92,7 +92,7 @@ The following addons are delivered in this repository:
   * `192.168.233.3`: Cashdesk receipt printer with cash drawer
   * `192.168.233.5`: Kitchen printer
   * `192.168.233.9`: Raspberry Pi (pospi)
-	* `192.168.233.10-50`: DHCP Range
+  * `192.168.233.10-50`: DHCP Range
 * Printers: [Epson TM-T20II](https://www.epson.ch/products/sd/pos-printer/epson-tm-t20ii)
 
 The Raspberry Pi 4 provides DNS and DHCP to the network with [Pi-hole](https://pi-hole.net/).
