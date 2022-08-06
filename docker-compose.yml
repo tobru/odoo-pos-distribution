@@ -1,43 +1,22 @@
 version: '2'
 services:
   web:
-    image: docker.io/tobru/odoo-pos:latest-pos
-    build: ./odoo
+    #image: docker.io/tobru/odoo-pos:latest-pos
+    image: docker.io/library/odoo:15
+    #build: ./odoo
     depends_on:
       - db
     ports:
       - 80:8069
     volumes:
       - odoo-web-data:/var/lib/odoo
+      - ./odoo/addons:/mnt/extra-addons
     environment:
       - HOST=db
       - USER=odoo
       - PASSWORD=odoo
-    hostname: web
-    networks:
-      localnet:
-        ipv4_address: 10.5.0.2
-  iotbox:
-    image: docker.io/tobru/odoo-pos:latest-iotbox
-    build: ./iotbox
-    depends_on:
-      - db
-    command: -- --load=web,hw_proxy,hw_posbox_homepage,hw_posbox_upgrade,hw_scale,hw_scanner,hw_escpos,hw_blackbox_be,hw_screen,hw_drivers,hw_printer_network
-    ports:
-      - 8070:8069
-      - 8072:8072
-    volumes:
-      - /dev/bus/usb:/dev/bus/usb
-    environment:
-      - HOST=db
-      - USER=odoo
-      - PASSWORD=odoo
-    hostname: iotbox
-    networks:
-      localnet:
-        ipv4_address: 10.5.0.3
   db:
-    image: postgres:10
+    image: postgres:14
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
@@ -45,16 +24,6 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - odoo-db-data:/var/lib/postgresql/data/pgdata
-    networks:
-      localnet:
-        ipv4_address: 10.5.0.4
 volumes:
   odoo-web-data:
   odoo-db-data:
-networks:
-  localnet:
-    driver: bridge
-    ipam:
-     config:
-       - subnet: 10.5.0.0/16
-         gateway: 10.5.0.1

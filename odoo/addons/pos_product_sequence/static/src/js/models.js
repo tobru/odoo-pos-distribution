@@ -1,54 +1,70 @@
-odoo.define('pos_product_sequence.models', function (require) {
-"use strict";
+odoo.define('pos_product_sequence.models', function(require) {
+    "use strict";
 
-var models = require('point_of_sale.models');
-var core = require('web.core');
+    var models = require('point_of_sale.models');
+    var core = require('web.core');
 
-var QWeb = core.qweb;
-var _t = core._t;
-var PosDB = require('point_of_sale.DB')
-var exports = require('point_of_sale.models');
+    var QWeb = core.qweb;
+    var _t = core._t;
+    var PosDB = require('point_of_sale.DB');
+    const Registries = require('point_of_sale.Registries');
+    const ProductsWidget = require('point_of_sale.ProductsWidget');
 
-PosDB.include({
-    get_product_by_category: function(category_id){
-        var product_ids  = this.product_by_category_id[category_id];
-        var list = [];
-        if (product_ids) {
-            for (var i = 0, len = Math.min(product_ids.length, this.limit); i < len; i++) {
-                list.push(this.product_by_id[product_ids[i]]);
-            }
-        }
-        if(list.length){
-            var new_list = _.sortBy(list, function(num) { 
-                    return num.pos_sequence; 
-            });
-            return new_list;
-        }
-        return list;
-    },
-});
-
-models.load_models({
-        model:  'product.product',
-        // todo remove list_price in master, it is unused
-        fields: ['display_name', 'list_price', 'lst_price', 'standard_price', 'categ_id', 'pos_categ_id', 'taxes_id',
-                 'barcode', 'default_code', 'to_weight', 'uom_id', 'description_sale', 'description',
-                 'product_tmpl_id','tracking','pos_sequence'],
-        order:  _.map(['pos_sequence','sequence','default_code','name'], function (name) { return {name: name}; }),
-        domain: [['sale_ok','=',true],['available_in_pos','=',true]],
-        context: function(self){ return { display_default_code: false }; },
-        loaded: function(self, products){
-            var using_company_currency = self.config.currency_id[0] === self.company.currency_id[0];
-            var conversion_rate = self.currency.rate / self.company_currency.rate;
-            self.db.add_products(_.map(products, function (product) {
-                if (!using_company_currency) {
-                    product.lst_price = round_pr(product.lst_price * conversion_rate, self.currency.rounding);
+    PosDB.include({
+        get_product_by_category: function(category_id) {
+            var product_ids = this.product_by_category_id[category_id];
+            var list = [];
+            if (product_ids) {
+                for (var i = 0, len = Math.min(product_ids.length, this.limit); i < len; i++) {
+                    list.push(this.product_by_id[product_ids[i]]);
                 }
-                product.categ = _.findWhere(self.product_categories, {'id': product.categ_id[0]});
-                return new exports.Product({}, product);
-            }));
+            }
+            if (list.length) {
+                var new_list = _.sortBy(list, function(num) {
+                    return num.pos_sequence;
+                });
+                return new_list;
+            }
+            return list;
         },
     });
-return exports;
 
+    models.PosModel.prototype.models.some(function(model) {
+        if (model.model !== 'product.product') {
+            return false;
+        }
+        // add name and attribute_value_ids to list of fields
+        // to fetch for product.product
+        ['pos_sequence'].forEach(function(field) {
+            if (model.fields.indexOf(field) == -1) {
+                model.fields.push(field);
+            }
+        });
+        model['order'] = _.map(['pos_sequence', 'sequence', 'default_code', 'name'], function(name) { return { name: name }; });
+        return true; //exit early the iteration of this.models
+    });
+
+    const BiProductsTemplateWidget = (ProductsWidget) =>
+        class extends ProductsWidget {
+            constructor() {
+                super(...arguments);
+            }
+
+            get productsToDisplay() {
+                let list = [];
+                if (this.searchWord !== '') {
+                    list = this.env.pos.db.search_product_in_category(
+                        this.selectedCategoryId,
+                        this.searchWord
+                    );
+                } else {
+                    list = this.env.pos.db.get_product_by_category(this.selectedCategoryId);
+                }
+                return list
+            }
+        };
+
+    Registries.Component.extend(ProductsWidget, BiProductsTemplateWidget);
+
+    return ProductsWidget;
 });
