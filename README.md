@@ -1,5 +1,21 @@
 # Odoo Point of Sale - PoS - Distribution
 
+❗**ARCHIVED** ❗
+
+This project was based on Odoo 12.
+When I started to work on it again, Odoo 15 was the current version.
+The Point of Sale application has _greatly_ improved since Odoo 12:
+
+* Receipt printing on network printers fully available out-of-the box
+* No iotbox needed anymore
+* Many quirks and workarounds present in this repo are outdated and not necessary anymore
+
+I'm now running Odoo in the cloud, no local deployment on a Raspberry Pi needed anymore.
+
+For this reason, I'm archiving this project and won't update any further.
+
+---
+
 Dockerfiles, Docker Compose and Kubernetes configuration for running an Odoo based PoS
 in containers.
 
